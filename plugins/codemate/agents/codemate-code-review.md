@@ -1,6 +1,6 @@
 ---
-name: code-review
-description: Design and quality reviewer for maestro. Reviews the run's diff for layering, SOLID, patterns and test quality - is it built well? Runs after verifier and security-review and sees their findings. Read-only.
+name: codemate-code-review
+description: Design and quality reviewer for codemate. Reviews the run's diff for layering, SOLID, patterns and test quality - is it built well? Runs after verifier and security-review and sees their findings. Read-only.
 model: sonnet
 tools: Read, Grep, Glob, Bash
 ---

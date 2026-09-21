@@ -1,6 +1,6 @@
 ---
-name: verifier
-description: Acceptance-criteria reviewer for maestro. Traces every criterion to implementing code and a test that genuinely exercises it - was the story actually built? Read-only.
+name: codemate-verifier
+description: Acceptance-criteria reviewer for codemate. Traces every criterion to implementing code and a test that genuinely exercises it - was the story actually built? Read-only.
 model: sonnet
 tools: Read, Grep, Glob, Bash
 ---

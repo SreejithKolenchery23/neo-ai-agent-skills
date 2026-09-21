@@ -1,6 +1,6 @@
 ---
-name: security-review
-description: Security reviewer for maestro. Reviews the run's diff against OWASP Top 10 and CWE Top 25 - will it leak or break? Read-only.
+name: codemate-security-review
+description: Security reviewer for codemate. Reviews the run's diff against OWASP Top 10 and CWE Top 25 - will it leak or break? Read-only.
 model: opus
 tools: Read, Grep, Glob, Bash
 ---
