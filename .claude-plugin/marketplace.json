@@ -1,0 +1,11 @@
+{
+  "name": "neo-ai-agent-skills",
+  "owner": { "name": "sreejithkolenchery" },
+  "plugins": [
+    {
+      "name": "codemate",
+      "source": "./plugins/codemate",
+      "description": "Story-to-PR delivery pipeline: plan, TDD implement, then verifier, security and code review gates."
+    }
+  ]
+}
