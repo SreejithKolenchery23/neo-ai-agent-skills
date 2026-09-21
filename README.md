@@ -57,4 +57,4 @@ Then give it a story ID or a one-line task.
 
 ## Status
 
-Early stage. The agents are in place; the skills and hooks described in the design (story intake, stack profiles, pipeline gates, and the PR-blocking hook) are not built yet, and their logic currently lives inline in the agents.
+Early stage. The agents and the two hooks (`gate-pr.mjs` blocks `gh pr create` until every gate has a valid receipt; `warn-pending.mjs` reports unfinished runs) are in place. The skills from the design (story intake, stack profiles, pipeline gates, ...) are not built yet, and their logic currently lives inline in the agents. See the [plugin README](plugins/codemate/README.md#hooks--the-deterministic-gate) for hook details and limits.

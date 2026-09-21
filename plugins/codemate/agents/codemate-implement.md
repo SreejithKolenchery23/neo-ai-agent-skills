@@ -14,6 +14,7 @@ Open or resume `.codemate/runs/<story-id>.json` (create the directory if needed;
 ```json
 {
   "story": { "id": "", "title": "" },
+  "branch": "<current git branch>",
   "stack": { "test": "", "build": "" },
   "baseSha": "<merge-base with the target branch>",
   "gates": {
@@ -27,8 +28,10 @@ Open or resume `.codemate/runs/<story-id>.json` (create the directory if needed;
 ```
 
 - `status` is one of `pending`, `done`, `skipped_by_config`, `blocked`.
-- A gate is `done` only with a **receipt**: `{ "at": "<ISO time>", "commit": "<HEAD sha>", "evidence": "<what ran and its result>" }`.
-- A gate may be `skipped_by_config` only if repo config (`.codemate/config.json`, `skip: [...]`) says so. A reviewer is never silently absent — record the skip.
+- A gate is `done` only with a **receipt**: `{ "at": "<ISO time>", "commit": "<HEAD sha>", "evidence": "<what ran and its result>" }`. Reviewer gates (`verifier`, `security-review`, `code-review`) also carry `"verdict": "PASS"`; record a reviewer gate `done` only after its verdict is PASS.
+- A gate may be `skipped_by_config` only if repo config (`.codemate/config.json`, `{ "skip": ["<gate>"] }`) lists it. A reviewer is never silently absent — record the skip.
+- The `tdd` receipt must be taken at the commit you are shipping: after any remediation, re-run the suite and build and refresh it.
+- Create the run file **before any other work**. `hooks/gate-pr.mjs` blocks `gh pr create` unless every gate before `pr` is valid, and a repo without a run file for the branch is blocked too. Do not try to work around the hook, edit around a missing gate, or set `CODEMATE_SKIP` — that is for humans only.
 - On start, read the file; resume at the first gate not `done`/`skipped_by_config`. Update the file immediately after each gate.
 
 ## Severity vocabulary (shared by every reviewer)
@@ -64,7 +67,7 @@ If any **Critical or High** finding is open: fix it (with a test where behaviour
 
 ## Gate: pr
 
-Only when every earlier gate is `done` or `skipped_by_config`. Push the branch and create the PR with `gh pr create`. The description includes: story ID/title, summary, acceptance-criteria → test mapping, review verdicts, and any accepted findings. If a gate is unmet, do **not** create the PR — report which gate is blocking, by name. Never bypass this with environment flags or by editing receipts.
+Only when every earlier gate is `done` or `skipped_by_config`. Push the branch and create the PR with `gh pr create`; the hook re-checks every receipt at that moment. After it succeeds, record the `pr` gate `done` with the PR URL as evidence. The description includes: story ID/title, summary, acceptance-criteria → test mapping, review verdicts, and any accepted findings. If a gate is unmet, do **not** create the PR — report which gate is blocking, by name. Never bypass this with environment flags or by editing receipts.
 
 ## Rules
 

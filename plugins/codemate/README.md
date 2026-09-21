@@ -24,6 +24,29 @@ codemate ──► codemate-plan ──(developer approves)──► codemate-im
 
 Run state lives in `.codemate/runs/<story-id>.json`. Severity vocabulary: `Critical · High · Medium · Low · Info`; Critical and High block the PR.
 
+## Hooks — the deterministic gate
+
+Hooks live in [hooks/](hooks/) and load automatically with the plugin. They need `node` on the PATH.
+
+| Event | Script | Effect |
+|---|---|---|
+| `PreToolUse` (Bash) | `gate-pr.mjs` | Blocks `gh pr create` unless every gate before `pr` is `done` with a valid receipt, or `skipped_by_config`. The block message names each unmet gate. |
+| `Stop` | `warn-pending.mjs` | Non-blocking. Lists unfinished gates for the current branch so an abandoned run is visible and resumable. |
+
+What `gate-pr.mjs` checks, per gate:
+
+- `done` needs a receipt with `at`, `commit`, `evidence`, and the commit must exist and be in the branch's history.
+- Reviewer gates (`verifier`, `security-review`, `code-review`) also need `verdict: "PASS"`.
+- The `tdd` receipt must match the code being shipped: any code change after its commit invalidates it.
+- `skipped_by_config` counts only if `.codemate/config.json` lists the gate: `{ "skip": ["security-review"] }`.
+- A repo with a `.codemate/` directory is managed, and needs a run file whose `branch` matches the current branch.
+
+**Bypass (humans only):** launch Claude Code with `CODEMATE_SKIP=1` in the environment for a non-Codemate PR in a managed repo. An inline `CODEMATE_SKIP=1 gh pr create` typed by the agent does not work.
+
+Suggested `.gitignore`: `.codemate/runs/` (per-developer state). Commit `.codemate/config.json` to make a repo managed for the whole team.
+
+**Limits:** the hook guards `gh pr create` only, not other ways to open a PR. Receipts are written by the agent, so the hook proves shape, commit ancestry and freshness, not that a reviewer honestly ran. A repo with no `.codemate/` directory is not gated.
+
 ## Not yet built
 
-The diagrams also describe skills (`story-intake`, `requirements-clarification`, `stack-profiles`, `test-driven-development`, `pipeline-gates`, `finding-acceptance`) and hooks (`gate-pr.mjs`, `warn-pending.mjs`). The agents currently carry that logic inline.
+The six skills from the design (`story-intake`, `requirements-clarification`, `stack-profiles`, `test-driven-development`, `pipeline-gates`, `finding-acceptance`) and the GitHub Copilot hook installer. The agents carry that logic inline.
